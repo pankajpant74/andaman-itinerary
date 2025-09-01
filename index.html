@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Andaman Itinerary — Interactive Poster</title>
+  <style>
+    :root{
+      --bg: #0b1220;          /* deep ocean */
+      --panel: #0f1a30;       /* dark card */
+      --accent: #14b8a6;      /* teal */
+      --accent-2: #ffb703;    /* sunset */
+      --text: #e6edf3;        /* high contrast */
+      --muted: #9fb3c8;
+      --chip: #0a3a4a;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; font:16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text); background:var(--bg); overflow-x:hidden;
+    }
+
+    /* Animated header wave */
+    .hero{position:relative; padding:28px 20px 90px; background:linear-gradient(180deg,#072035 0%, #0b1220 100%);}
+    .brand{display:flex; align-items:center; gap:14px; max-width:1200px; margin:0 auto;}
+    .brand .title{font-weight:800; font-size:clamp(26px,4vw,36px); letter-spacing:0.4px}
+    .subtitle{color:var(--muted); font-size:clamp(12px,2.2vw,14px)}
+    .actions{margin-left:auto; display:flex; gap:10px}
+    .btn{background:var(--accent); border:none; color:#06231f; font-weight:700; padding:10px 14px; border-radius:12px; cursor:pointer}
+    .btn.secondary{background:transparent; color:var(--text); border:1px solid #2b4262}
+
+    .wave{position:absolute; left:0; right:0; bottom:-1px; height:120px; pointer-events:none;}
+    .wave svg{display:block; width:160%; height:100%; animation: drift 22s linear infinite; transform:translateX(-15%)}
+    @keyframes drift{0%{transform:translateX(-15%)}100%{transform:translateX(-0%)} }
+
+    /* Layout */
+    .wrap{max-width:1200px; margin:-60px auto 80px; padding:0 20px}
+    .grid{display:grid; grid-template-columns: 360px 1fr; gap:22px}
+    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
+
+    /* Sidebar */
+    .card{background:var(--panel); border:1px solid #22344c; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .sidebar{padding:18px}
+    .sidebar h3{margin:0 0 10px}
+    .chips{display:flex; flex-wrap:wrap; gap:8px}
+    .chip{background:var(--chip); border:1px solid #1b4a54; color:#a7faf0; padding:6px 10px; border-radius:999px; font-size:12px}
+    .legend{border-top:1px dashed #29425e; margin-top:14px; padding-top:12px; color:var(--muted); font-size:13px}
+    .jump{margin-top:14px; display:grid; gap:8px}
+    .jump button{width:100%; background:#10243e; color:#cfe7ff; border:1px solid #22466f; border-radius:12px; padding:9px; text-align:left; cursor:pointer}
+    .jump button:hover{border-color:#3c78b6}
+
+    /* Timeline */
+    .timeline{position:relative; padding:16px}
+    .timeline::before{content:""; position:absolute; left:30px; top:0; bottom:0; width:3px; background:linear-gradient(180deg, #0a8f7b, #11324b)}
+    .day{position:relative; margin-left:60px; margin-bottom:16px}
+    .dot{position:absolute; left:-40px; top:18px; width:18px; height:18px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 6px rgba(20,184,166,.15); animation:pulse 3s ease-in-out infinite}
+    @keyframes pulse{0%{box-shadow:0 0 0 6px rgba(20,184,166,.15)}50%{box-shadow:0 0 0 14px rgba(20,184,166,.06)}100%{box-shadow:0 0 0 6px rgba(20,184,166,.15)}}
+
+    .day .hdr{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:14px 16px; cursor:pointer; border-bottom:1px solid #1c2b43}
+    .day .hdr h2{margin:0; font-size:18px}
+    .badge{display:inline-flex; align-items:center; gap:6px; font-size:12px; padding:4px 8px; border-radius:999px; background:#0a2a39; border:1px solid #1a4757; color:#9ee7df}
+
+    .panel{padding:12px 16px 18px}
+    .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
+    @media (max-width: 960px){.row{grid-template-columns:1fr}}
+
+    /* Schedule table */
+    .sched{border-collapse:separate; border-spacing:0 8px; width:100%}
+    .sched td{background:#0b2139; border:1px solid #24456d; padding:10px 12px; vertical-align:top}
+    .sched .time{white-space:nowrap; color:#b2c7dd; width:160px}
+
+    /* Iconic chips */
+    .ico{font-style:normal; padding-right:.4em}
+    .tag{display:inline-block; padding:2px 8px; border:1px solid #385d87; border-radius:999px; margin-right:6px; font-size:12px; color:#cfe7ff}
+
+    /* Collapsible */
+    details.day{border:1px solid #22344c; border-radius:16px; overflow:hidden; background:linear-gradient(180deg,#0f1a30 0%,#0b182b 100%)}
+    details.day[open] .hdr{background:#0c2137}
+
+    /* Utility */
+    .note{color:#ffd089}
+    .muted{color:var(--muted)}
+    .right{ text-align:right }
+
+    /* Footer */
+    .footer{margin-top:20px; padding:16px; display:flex; gap:12px; align-items:center; justify-content:space-between; border-top:1px dashed #2a456a; color:var(--muted)}
+
+    /* Print styling for clean poster export */
+    @media print{
+      .actions, .jump, .legend, .footer, .wave{display:none!important}
+      body{background:#fff; color:#000}
+      .card{box-shadow:none; border-color:#999}
+      .timeline::before{background:#999}
+      .dot{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="brand">
+      <svg width="42" height="42" viewBox="0 0 64 64" aria-hidden="true" role="img">
+        <defs>
+          <linearGradient id="g1" x1="0" x2="1">
+            <stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#3dd6c4"/>
+          </linearGradient>
+        </defs>
+        <circle cx="32" cy="32" r="30" fill="#082133" stroke="#1e3a5f"/>
+        <path d="M6 40 Q32 50 58 38" fill="none" stroke="url(#g1)" stroke-width="4"/>
+        <circle cx="20" cy="26" r="3" fill="#ffb703">
+          <animate attributeName="cy" values="26;24;26" dur="3s" repeatCount="indefinite"/>
+        </circle>
+        <path d="M12 32 q8-6 16 0 q8 6 16 0" fill="none" stroke="#51ffe6" stroke-width="2" stroke-dasharray="2 6">
+          <animate attributeName="stroke-dashoffset" from="0" to="-40" dur="6s" repeatCount="indefinite"/>
+        </path>
+      </svg>
+      <div>
+        <div class="title">Andaman Itinerary </div>
+        <div class="subtitle">Port Blair → Havelock (Swaraj Dweep) → Neil (Shaheed Dweep) → Port Blair · 9 Days</div>
+      </div>
+      <div class="actions">
+        <!--button class="btn" id="printBtn">Export to PDF</button-->
+        <button class="btn secondary" id="expandAll">Expand All</button>
+        <button class="btn secondary" id="collapseAll">Collapse All</button>
+      </div>
+    </div>
+    <div class="wave">
+      <svg viewBox="0 0 1440 120" preserveAspectRatio="none">
+        <path d="M0,96 C240,64 240,64 480,92 C720,120 720,40 960,68 C1200,96 1200,64 1440,88 L1440,120 L0,120 Z" fill="#0a324f" opacity="0.6"></path>
+      </svg>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+      <!-- Sidebar: legend, filters, jumps -->
+      <aside class="card sidebar">
+        <h3>Legend</h3>
+        <div class="chips">
+          <div class="chip">✈️ Flight</div>
+          <div class="chip">🛥️ Ferry</div>
+          <div class="chip">🏨 Hotel</div>
+          <div class="chip">🏝️ Beach</div>
+          <div class="chip">🤿 Scuba</div>
+          <div class="chip">🌅 Sunrise/Sunset</div>
+          <div class="chip">🏛️ Heritage</div>
+          <div class="chip">🛶 Kayak</div>
+          <div class="chip">🛍️ Shopping</div>
+        </div>
+        <div class="legend">
+          Click a day to expand/collapse. Use <strong>Export to PDF</strong> for a clean poster.
+        </div>
+        <div class="jump">
+          <button data-jump="#day1">Day 1 · Port Blair</button>
+          <button data-jump="#day2">Day 2 · Havelock</button>
+          <button data-jump="#day3">Day 3 · Scuba</button>
+          <button data-jump="#day4">Day 4 · Sunrise & Kayak</button>
+          <button data-jump="#day5">Day 5 · Neil</button>
+          <button data-jump="#day6">Day 6 · Beaches & Snorkel</button>
+          <button data-jump="#day7">Day 7 · Leisure / Baratang</button>
+          <button data-jump="#day8">Day 8 · Chidiya Tapu</button>
+          <button data-jump="#day9">Day 9 · Departure</button>
+        </div>
+      </aside>
+
+      <!-- Timeline -->
+      <section class="card timeline" id="timeline">
+        
+        <!-- Day 1 -->
+        <details class="day" id="day1" open>
+          <summary class="hdr"><span>Day 1 — Arrival in Port Blair & Historical Immersion</span><span class="badge">✈️ 🏛️ 🍴</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">14:30</td><td>Arrive at Veer Savarkar International Airport (IXZ), Port Blair. <span class="tag">✈️ Arrival</span></td></tr>
+              <tr><td class="time">15:30–16:30</td><td>Transfer to hotel for check‑in and freshen up. <span class="tag">🏨 Check‑in</span></td></tr>
+              <tr><td class="time">17:00–18:30</td><td>Visit the Cellular Jail (Kala Pani); explore museum and cells. <span class="tag">🏛️ Heritage</span></td></tr>
+              <tr><td class="time">18:45–19:45</td><td>Light & Sound Show at Cellular Jail. <em class="note">Poignant narration of India’s freedom struggle.</em></td></tr>
+              <tr><td class="time">20:30 →</td><td>Dinner: <strong>Annapurna Cafeteria</strong> (veg South Indian) / <strong>New Lighthouse</strong> (seafood, view). <span class="tag">🍴 Dining</span></td></tr>
+            </table>
+          </div>
+        </details>
+
+        <!-- Day 2 -->
+        <details class="day" id="day2" open>
+          <summary class="hdr"><span>Day 2 — Journey to Havelock (Swaraj Dweep)</span><span class="badge">🛥️ 🏝️ 🌅</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">07:00</td><td>Early breakfast; transfer to Haddo Jetty.</td></tr>
+              <tr><td class="time">08:00–09:30</td><td>Pre‑booked high‑speed ferry (Makruzz / Nautika / Green Ocean) to Havelock. <span class="tag">🛥️ Ferry</span></td></tr>
+              <tr><td class="time">10:00–11:00</td><td>Arrive Havelock; resort transfer & check‑in.</td></tr>
+              <tr><td class="time">11:00–14:00</td><td>Settle in, lunch, relax.</td></tr>
+              <tr><td class="time">14:30 → sunset</td><td>Radhanagar Beach (No. 7). For seclusion, walk 15–20 min left/right from entrance. <span class="tag">🏝️ Beach</span> <span class="tag">🌅 Sunset</span></td></tr>
+            </table>
+          </div>
+        </details>
+
+        <!-- Day 3 -->
+        <details class="day" id="day3" open>
+          <summary class="hdr"><span>Day 3 — Scuba Diving</span><span class="badge">🤿 🧭</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">07:30–13:00</td><td>Pre‑booked dive with PADI/SSI center (e.g., Barefoot Scuba, Dive India). <span class="tag">🤿 DSD/Guided</span></td></tr>
+              <tr><td class="time">—</td><td><em>Beginners</em>: likely sites “Tribe Gate” / “Nemo Reef”. Request less‑busy slots.</td></tr>
+              <tr><td class="time">13:00 →</td><td>Rest & lunch. Suggested: <em>Full Moon Café</em> for a quiet meal.</td></tr>
+            </table>
+          </div>
+        </details>
+
+        <!-- Day 4 -->
+        <details class="day" id="day4" open>
+          <summary class="hdr"><span>Day 4 — Serene Sunrise & Mangrove Kayaking</span><span class="badge">🌅 🛶</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">05:00</td><td>Kalapathar Beach sunrise over turquoise waters & black rock formations. <span class="tag">🌅 Sunrise</span></td></tr>
+              <tr><td class="time">08:00</td><td>Return to hotel; breakfast.</td></tr>
+              <tr><td class="time">10:00–13:00</td><td>Guided mangrove kayaking tour (alternative to crowded Elephant Beach). <span class="tag">🛶 Kayak</span></td></tr>
+              <tr><td class="time">Afternoon</td><td>Relax; explore local market near Village No. 3.</td></tr>
+            </table>
+          </div>
+        </details>
+
+        <!-- Day 5 -->
+        <details class="day" id="day5" open>
+          <summary class="hdr"><span>Day 5 — Transfer to Neil Island (Shaheed Dweep)</span><span class="badge">🛥️ 🏝️ 🌅</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">Morning</td><td>Breakfast in Havelock.</td></tr>
+              <tr><td class="time">10:00–11:00</td><td>Ferry: Havelock → Neil Island.</td></tr>
+              <tr><td class="time">11:30–13:00</td><td>Neil resort check‑in; rest.</td></tr>
+              <tr><td class="time">15:30 →</td><td>Laxmanpur Beach (No. 1) for sunset; at low tide walk to <strong>Natural Bridge</strong> (coral formation). <span class="note">Check tide times.</span></td></tr>
+            </table>
+          </div>
+        </details>
+
+        <!-- Day 6 -->
+        <details class="day" id="day6" open>
+          <summary class="hdr"><span>Day 6 — Neil’s Beaches & Snorkeling (+ Baratang Subgroup transfer)</span><span class="badge">🌅 🤿 🛥️</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <div class="row">
+              <div>
+                <table class="sched">
+                  <tr><td class="time">05:00</td><td>Sunrise at Sitapur Beach (No. 5).</td></tr>
+                  <tr><td class="time">09:00–12:00</td><td>Bharatpur Beach (No. 2) snorkeling. Hire guide + small boat to offshore points for best shallow reefs. <span class="tag">🤿 Snorkel</span></td></tr>
+                  <tr><td class="time">Afternoon</td><td>Lunch & relax. Optional: rent scooter/bicycle; explore villages, paddy fields.</td></tr>
+                </table>
+              </div>
+              <div>
+                <table class="sched">
+                  <tr><td class="time">Baratang Subgroup</td><td class="muted">Morning till ~12:00 join main group for Sitapur sunrise & Bharatpur snorkeling.</td></tr>
+                  <tr><td class="time">14:00–15:00</td><td>Ferry Neil → Port Blair.</td></tr>
+                  <tr><td class="time">16:00–17:00</td><td>Arrive Port Blair; hotel check‑in.</td></tr>
+                  <tr><td class="time">Evening</td><td>Early dinner; early sleep for next day’s start.</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Day 7 -->
+        <details class="day" id="day7" open>
+          <summary class="hdr"><span>Day 7 — Leisure & Deeper Exploration of Neil / Baratang Day</span><span class="badge">🧘 🏝️ 🚐</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <div class="row">
+              <div>
+                <table class="sched">
+                  <tr><td class="time">Flexible</td><td>Pure relaxation.
+                    <div class="muted">Option A: stay at resort beach. Option B: revisit favourite / explore deserted beach.</div>
+                  </td></tr>
+                  <tr><td class="time">Night (optional)</td><td>Bioluminescence tour near new moon; ask local guide. <span class="tag">✨ Bioluminescence</span></td></tr>
+                </table>
+              </div>
+              <div>
+                <table class="sched">
+                  <tr><td class="time">Baratang Subgroup</td><td class="muted">Port Blair based.</td></tr>
+                  <tr><td class="time">03:30</td><td>Wake‑up call.</td></tr>
+                  <tr><td class="time">04:00</td><td>Depart by pre‑booked vehicle (private/shared).</td></tr>
+                  <tr><td class="time">Return</td><td>Follow same route back via afternoon convoy.</td></tr>
+                  <tr><td class="time">17:00–18:00</td><td>Arrive Port Blair hotel; rest & dinner.</td></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Day 8 -->
+        <details class="day" id="day8" open>
+          <summary class="hdr"><span>Day 8 — Return to Port Blair & Chidiya Tapu + Souvenirs</span><span class="badge">🛥️ 🛍️ 🌅</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">Morning</td><td>Leisurely breakfast on Neil; pack up.</td></tr>
+              <tr><td class="time">~11:00–12:30</td><td>Ferry Neil → Port Blair; <strong>13:00</strong> hotel check‑in.</td></tr>
+              <tr><td class="time">16:00</td><td>Taxi departs for Chidiya Tapu. <span class="tag">🌅 Sunset</span></td></tr>
+              <tr><td class="time">17:45</td><td>Depart Chidiya Tapu as dusk settles.</td></tr>
+              <tr><td class="time">18:45</td><td>Arrive back at hotel.</td></tr>
+              <tr><td class="time">19:00–20:00</td><td>Freshen up; visit <strong>Sagarika Govt Emporium</strong> for souvenirs (open). <span class="tag">🛍️ Shopping</span></td></tr>
+              <tr><td class="time">20:30 →</td><td>Farewell dinner (e.g., <em>Amaya at SeaShell</em>).</td></tr>
+              <tr><td class="time">Baratang Subgroup</td><td>Already in Port Blair; relaxed morning and joint evening to Chidiya Tapu.</td></tr>
+            </table>
+          </div>
+        </details>
+
+        <!-- Day 9 -->
+        <details class="day" id="day9" open>
+          <summary class="hdr"><span>Day 9 — Departure</span><span class="badge">✈️</span></summary>
+          <div class="dot" aria-hidden="true"></div>
+          <div class="panel">
+            <table class="sched">
+              <tr><td class="time">08:30</td><td>After breakfast, proceed to IXZ airport.</td></tr>
+              <tr><td class="time">09:00</td><td>Arrive 2 hours before flight.</td></tr>
+              <tr><td class="time">11:00</td><td>Depart Andaman Islands. <span class="tag">✈️ Flight</span></td></tr>
+            </table>
+          </div>
+        </details>
+
+        <div class="footer">
+          <div>Tip: For tides (Natural Bridge) and moon phase (bioluminescence), check local listings the day prior.</div>
+          <div class="muted">Designed as a single‑file HTML poster · Print → A3 landscape recommended</div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    // Print
+    document.getElementById('printBtn').addEventListener('click',()=>window.print());
+
+    // Jump controls
+    document.querySelectorAll('[data-jump]').forEach(btn=>{
+      btn.addEventListener('click',()=>{
+        const target = document.querySelector(btn.dataset.jump);
+        if(target){
+          target.open = true;
+          target.scrollIntoView({behavior:'smooth', block:'start'});
+          target.classList.add('focus');
+          setTimeout(()=>target.classList.remove('focus'),1000);
+        }
+      });
+    });
+
+    // Expand/Collapse all
+    const allDays = Array.from(document.querySelectorAll('details.day'));
+    document.getElementById('expandAll').addEventListener('click',()=>allDays.forEach(d=>d.open=true));
+    document.getElementById('collapseAll').addEventListener('click',()=>allDays.forEach(d=>d.open=false));
+
+    // Accessibility: close others when one is opened (optional). Here we keep multiple open.
+  </script>
+</body>
+</html>
+
