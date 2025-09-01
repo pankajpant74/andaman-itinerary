@@ -7,10 +7,10 @@
   <style>
     :root{
       --bg: #0b1220;          /* deep ocean */
-      --panel: #0f1a30;       /* dark card */
-      --accent: #14b8a6;      /* teal */
-      --accent-2: #ffb703;    /* sunset */
-      --text: #e6edf3;        /* high contrast */
+      --panel: #0f1a30;        /* dark card */
+      --accent: #14b8a6;       /* teal */
+      --accent-2: #ffb703;     /* sunset */
+      --text: #e6edf3;         /* high contrast */
       --muted: #9fb3c8;
       --chip: #0a3a4a;
     }
@@ -37,8 +37,7 @@
     /* Layout */
     .wrap{max-width:1200px; margin:-60px auto 80px; padding:0 20px}
     .grid{display:grid; grid-template-columns: 360px 1fr; gap:22px}
-    @media (max-width: 960px){.grid{grid-template-columns:1fr}}
-
+    
     /* Sidebar */
     .card{background:var(--panel); border:1px solid #22344c; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.25)}
     .sidebar{padding:18px}
@@ -63,7 +62,6 @@
 
     .panel{padding:12px 16px 18px}
     .row{display:grid; grid-template-columns: 1fr 1fr; gap:12px}
-    @media (max-width: 960px){.row{grid-template-columns:1fr}}
 
     /* Schedule table */
     .sched{border-collapse:separate; border-spacing:0 8px; width:100%}
@@ -86,6 +84,58 @@
     /* Footer */
     .footer{margin-top:20px; padding:16px; display:flex; gap:12px; align-items:center; justify-content:space-between; border-top:1px dashed #2a456a; color:var(--muted)}
 
+    /* --- RESPONSIVE STYLES --- */
+
+    /* For Tablets & smaller desktops */
+    @media (max-width: 960px){
+      .grid{grid-template-columns:1fr}
+      .row{grid-template-columns:1fr}
+    }
+
+    /* For Mobile Phones */
+    @media (max-width: 680px){
+      .wrap{padding:0 15px; margin-top:-70px}
+      
+      /* Header: stack title and actions */
+      .brand{flex-wrap: wrap;}
+      .actions{margin-left: 0; width:100%; margin-top:16px; justify-content:center}
+
+      /* Timeline: reduce indentation */
+      .timeline{padding:12px;}
+      .timeline::before{left:15px;}
+      .day{margin-left:35px;}
+      .dot{left:-25px;}
+
+      /* Day header: allow text to wrap */
+      .day .hdr{flex-wrap:wrap}
+
+      /* Schedule Table: transform to card-like blocks */
+      .sched tr{
+        display:block;
+        border:1px solid #24456d;
+        border-radius:8px;
+        margin-bottom:12px;
+      }
+      .sched td{
+        display:block;
+        width:auto; /* override default table behavior */
+        border:none;
+      }
+      .sched .time{
+        width:auto;
+        font-weight:600;
+        color: var(--accent);
+        border-bottom:1px solid #24456d;
+      }
+      
+      /* Footer: stack content */
+      .footer{
+        flex-direction:column;
+        text-align:center;
+        gap:8px;
+      }
+    }
+    
     /* Print styling for clean poster export */
     @media print{
       .actions, .jump, .legend, .footer, .wave{display:none!important}
@@ -119,7 +169,7 @@
         <div class="subtitle">Port Blair → Havelock (Swaraj Dweep) → Neil (Shaheed Dweep) → Port Blair · 9 Days</div>
       </div>
       <div class="actions">
-        <button class="btn" id="printBtn">Export to PDF</button-->
+        <button class="btn" id="printBtn">Export to PDF</button>
         <button class="btn secondary" id="expandAll">Expand All</button>
         <button class="btn secondary" id="collapseAll">Collapse All</button>
       </div>
@@ -133,7 +183,6 @@
 
   <main class="wrap">
     <div class="grid">
-      <!-- Sidebar: legend, filters, jumps -->
       <aside class="card sidebar">
         <h3>Legend</h3>
         <div class="chips">
@@ -163,12 +212,10 @@
         </div>
       </aside>
 
-      <!-- Timeline -->
       <section class="card timeline" id="timeline">
         
-        <!-- Day 1 -->
         <details class="day" id="day1" open>
-          <summary class="hdr"><span>Day 1 — Arrival in Port Blair & Historical Immersion</span><span class="badge">✈️ 🏛️ 🍴</span></summary>
+          <summary class="hdr"><h2>Day 1 — Arrival in Port Blair & Historical Immersion</h2><span class="badge">✈️ 🏛️ 🍴</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -181,9 +228,8 @@
           </div>
         </details>
 
-        <!-- Day 2 -->
         <details class="day" id="day2" open>
-          <summary class="hdr"><span>Day 2 — Journey to Havelock (Swaraj Dweep)</span><span class="badge">🛥️ 🏝️ 🌅</span></summary>
+          <summary class="hdr"><h2>Day 2 — Journey to Havelock (Swaraj Dweep)</h2><span class="badge">🛥️ 🏝️ 🌅</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -196,9 +242,8 @@
           </div>
         </details>
 
-        <!-- Day 3 -->
         <details class="day" id="day3" open>
-          <summary class="hdr"><span>Day 3 — Scuba Diving</span><span class="badge">🤿 🧭</span></summary>
+          <summary class="hdr"><h2>Day 3 — Scuba Diving</h2><span class="badge">🤿 🧭</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -209,9 +254,8 @@
           </div>
         </details>
 
-        <!-- Day 4 -->
         <details class="day" id="day4" open>
-          <summary class="hdr"><span>Day 4 — Serene Sunrise & Mangrove Kayaking</span><span class="badge">🌅 🛶</span></summary>
+          <summary class="hdr"><h2>Day 4 — Serene Sunrise & Mangrove Kayaking</h2><span class="badge">🌅 🛶</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -223,9 +267,8 @@
           </div>
         </details>
 
-        <!-- Day 5 -->
         <details class="day" id="day5" open>
-          <summary class="hdr"><span>Day 5 — Transfer to Neil Island (Shaheed Dweep)</span><span class="badge">🛥️ 🏝️ 🌅</span></summary>
+          <summary class="hdr"><h2>Day 5 — Transfer to Neil Island (Shaheed Dweep)</h2><span class="badge">🛥️ 🏝️ 🌅</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -237,9 +280,8 @@
           </div>
         </details>
 
-        <!-- Day 6 -->
         <details class="day" id="day6" open>
-          <summary class="hdr"><span>Day 6 — Neil’s Beaches & Snorkeling (+ Baratang Subgroup transfer)</span><span class="badge">🌅 🤿 🛥️</span></summary>
+          <summary class="hdr"><h2>Day 6 — Neil’s Beaches & Snorkeling (+ Baratang Subgroup transfer)</h2><span class="badge">🌅 🤿 🛥️</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <div class="row">
@@ -262,9 +304,8 @@
           </div>
         </details>
 
-        <!-- Day 7 -->
         <details class="day" id="day7" open>
-          <summary class="hdr"><span>Day 7 — Leisure & Deeper Exploration of Neil / Baratang Day</span><span class="badge">🧘 🏝️ 🚐</span></summary>
+          <summary class="hdr"><h2>Day 7 — Leisure & Deeper Exploration of Neil / Baratang Day</h2><span class="badge">🧘 🏝️ 🚐</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <div class="row">
@@ -289,9 +330,8 @@
           </div>
         </details>
 
-        <!-- Day 8 -->
         <details class="day" id="day8" open>
-          <summary class="hdr"><span>Day 8 — Return to Port Blair & Chidiya Tapu + Souvenirs</span><span class="badge">🛥️ 🛍️ 🌅</span></summary>
+          <summary class="hdr"><h2>Day 8 — Return to Port Blair & Chidiya Tapu + Souvenirs</h2><span class="badge">🛥️ 🛍️ 🌅</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -307,9 +347,8 @@
           </div>
         </details>
 
-        <!-- Day 9 -->
         <details class="day" id="day9" open>
-          <summary class="hdr"><span>Day 9 — Departure</span><span class="badge">✈️</span></summary>
+          <summary class="hdr"><h2>Day 9 — Departure</h2><span class="badge">✈️</span></summary>
           <div class="dot" aria-hidden="true"></div>
           <div class="panel">
             <table class="sched">
@@ -354,4 +393,3 @@
   </script>
 </body>
 </html>
-
