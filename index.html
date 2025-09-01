@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Andaman Itinerary </title>
+  <title>Andaman Itinerary</title>
   <style>
     :root{
       --bg: #0b1220;          /* deep ocean */
@@ -40,7 +40,11 @@
     
     /* Sidebar */
     .card{background:var(--panel); border:1px solid #22344c; border-radius:18px; box-shadow:0 10px 30px rgba(0,0,0,.25)}
-    .sidebar{padding:18px}
+    .sidebar{
+      padding:18px;
+      position: relative; /* Lifts the card into a new stacking context */
+      z-index: 1;         /* Ensures it appears above the header wave */
+    }
     .sidebar h3{margin:0 0 10px}
     .chips{display:flex; flex-wrap:wrap; gap:8px}
     .chip{background:var(--chip); border:1px solid #1b4a54; color:#a7faf0; padding:6px 10px; border-radius:999px; font-size:12px}
@@ -185,7 +189,7 @@
     <div class="grid">
       <aside class="card sidebar">
         <div class="legend">
-          
+          Click a day to expand/collapse. 
         </div>
         <div class="jump">
           <button data-jump="#day1">Day 1 · Port Blair</button>
@@ -308,7 +312,7 @@
                 <table class="sched">
                   <tr><td class="time">Baratang Subgroup</td><td class="muted">Port Blair based.</td></tr>
                   <tr><td class="time">03:30</td><td>Wake‑up call.</td></tr>
-                  <tr><td class="time">04:00</td><td>Depart by pre‑booked vehicle (private/shared).</td></tr>
+                  <tr><td class="time">04:00</td><td>Depart by pre‑booked vehicle ( private/shared).</td></tr>
                   <tr><td class="time">Return</td><td>Follow same route back via afternoon convoy.</td></tr>
                   <tr><td class="time">17:00–18:00</td><td>Arrive Port Blair hotel; rest & dinner.</td></tr>
                 </table>
